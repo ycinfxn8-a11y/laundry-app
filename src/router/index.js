@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { getAuth } from 'firebase/auth'
-// import { getFirestore, doc, getDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
 import Home from '../pages/Home.vue'
 import Order from '../pages/Order.vue'
 import History from '../pages/History.vue'
 import Login from '../pages/Login.vue'
 
-// import AdminDashboard from '../pages/admin/Dashboard.vue'
-// import AdminOrderDetail from '../pages/admin/OrderDetail.vue'
+import AdminDashboard from '../pages/admin/Dashboard.vue'
+import AdminOrderDetail from '../pages/admin/OrderDetail.vue'
 
 const routes = [
   { path: '/login', component: Login },
@@ -16,8 +16,8 @@ const routes = [
   { path: '/history', component: History, meta: { requiresAuth: true } },
 
   // Admin routes
-//   { path: '/admin', component: AdminDashboard, meta: { requiresAuth: true, requiresAdmin: true } },
-//   { path: '/admin/order/:id', component: AdminOrderDetail, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/admin', component: AdminDashboard, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/admin/order/:id', component: AdminOrderDetail, meta: { requiresAuth: true, requiresAdmin: true } },
 ]
 
 const router = createRouter({
@@ -26,11 +26,11 @@ const router = createRouter({
 })
 
 // Cek auth sebelum pindah halaman
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = getAuth()
   const user = auth.currentUser
 
-  /* if (to.meta.requiresAuth && !user) {
+  if (to.meta.requiresAuth && !user) {
     return next('/login')
   }
 
@@ -42,12 +42,7 @@ router.beforeEach((to, from, next) => {
     if (role !== 'admin') return next('/')
   }
 
-  next() */
-  if (to.meta.requiresAuth && !user) {
-    next('/login')
-  } else {
-    next()
-  }
+  next()
 })
 
 export default router
