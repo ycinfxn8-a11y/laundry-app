@@ -32,7 +32,7 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  const statusMessages = {
+const statusMessages = {
   confirmed:  'Pesanan kamu sudah dikonfirmasi! ✅',
   picked_up:  'Laundry kamu sedang dalam perjalanan 🚗',
   processing: 'Laundry kamu sedang diproses 🫧',
@@ -50,13 +50,9 @@ async function updateOrderStatus(orderId, status) {
       updatedAt: serverTimestamp()
     })
 
-    // Ambil oneSignalPlayerId dari Firestore
-    const userDoc = await getDoc(doc(db, 'users', order.userId))
-    const playerId = userDoc.data()?.oneSignalPlayerId
-
-    // Kirim notifikasi
+    // Kirim notif langsung pakai userId dari order
     await sendPushNotification(
-      playerId,
+      order.userId,
       '🧺 Update Pesanan Laundry',
       statusMessages[status] || 'Status pesanan kamu diperbarui'
     )
