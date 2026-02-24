@@ -5,10 +5,12 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  getDoc,
   serverTimestamp,
   query,
   orderBy
 } from 'firebase/firestore'
+import { sendPushNotification } from '../onesignal'
 import { db } from '../firebase/config'
 
 export const useAdminStore = defineStore('admin', () => {
@@ -30,18 +32,38 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  // Update status order
-  async function updateOrderStatus(orderId, status) {
-    loading.value = true
-    try {
-      await updateDoc(doc(db, 'orders', orderId), {
-        status,
-        updatedAt: serverTimestamp()
-      })
-    } finally {
-      loading.value = false
-    }
+  const statusMessages = {
+  confirmed:  'Pesanan kamu sudah dikonfirmasi! ✅',
+  picked_up:  'Laundry kamu sedang dalam perjalanan 🚗',
+  processing: 'Laundry kamu sedang diproses 🫧',
+  done:       'Laundry kamu sudah selesai! ✨',
+  delivered:  'Laundry sudah diantar, terima kasih! 📦',
+}
+
+async function updateOrderStatus(orderId, status) {
+  loading.value = true
+  try {
+    const order = orders.value.find(o => o.id === orderId)
+
+    await updateDoc(doc(db, 'orders', orderId), {
+      status,
+      updatedAt: serverTimestamp()
+    })
+
+    // Ambil oneSignalPlayerId dari Firestore
+    const userDoc = await getDoc(doc(db, 'users', order.userId))
+    const playerId = userDoc.data()?.oneSignalPlayerId
+
+    // Kirim notifikasi
+    await sendPushNotification(
+      playerId,
+      '🧺 Update Pesanan Laundry',
+      statusMessages[status] || 'Status pesanan kamu diperbarui'
+    )
+  } finally {
+    loading.value = false
   }
+}
 
   // Statistik sederhana
   const stats = computed(() => {
