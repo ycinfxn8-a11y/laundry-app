@@ -11,7 +11,7 @@ export default defineConfig({
         name: 'Laundry App',
         short_name: 'Laundry',
         description: 'Aplikasi pemesanan laundry',
-        theme_color: '#3b82f6',
+        theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',
