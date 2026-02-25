@@ -17,7 +17,7 @@ export async function sendPushNotification(userId, title, body) {
   if (!userId) return
 
   try {
-    const res = await fetch('/api/send-notification', {
+    const res = await fetch('/.netlify/functions/send-notification', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, title, body })
