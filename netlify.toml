@@ -2,3 +2,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/api/onesignal/*"
+  to = "https://onesignal.com/api/v1/:splat"
+  status = 200
+  force = true
+  headers = {Authorization = "Basic os_v2_app_jc367yaptneajjbwg4iibwl2mwzddq6vf5pu6rebigcusjner3wxtuw7u3yjyvpek5tqirt4lr5kwf7xgxclqmc2kahqg2lakmcgzaq"}
