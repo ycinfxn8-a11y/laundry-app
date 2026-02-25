@@ -14,29 +14,17 @@ export async function initOneSignal(userId) {
 }
 
 export async function sendPushNotification(userId, title, body) {
-  console.log('Kirim notif ke userId:', userId)
   if (!userId) return
 
   try {
-    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+    const res = await fetch('/api/send-notification', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${import.meta.env.VITE_ONESIGNAL_API_KEY}`
-      },
-      body: JSON.stringify({
-        app_id: import.meta.env.VITE_ONESIGNAL_APP_ID,
-        target_channel: 'push',
-        include_aliases: {
-          external_id: [userId]
-        },
-        headings: { en: title },
-        contents: { en: body },
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, title, body })
     })
 
     const data = await res.json()
-    console.log('Response OneSignal:', data)
+    console.log('Response notifikasi:', data)
   } catch (err) {
     console.error('Error kirim notif:', err)
   }
